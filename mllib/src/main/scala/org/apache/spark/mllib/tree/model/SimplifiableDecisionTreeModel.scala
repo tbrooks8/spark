@@ -18,18 +18,15 @@
 package org.apache.spark.mllib.tree.model
 
 import org.apache.spark.annotation.Experimental
+import org.apache.spark.mllib.linalg.Vector
 import org.apache.spark.mllib.tree.configuration.Algo._
 import org.apache.spark.rdd.RDD
-import org.apache.spark.mllib.linalg.Vector
 
-/**
- * :: Experimental ::
- * Model to store the decision tree parameters
- * @param topNode root node
- * @param algo algorithm type -- classification or regression
- */
+import scala.annotation.tailrec
+
+
 @Experimental
-class DecisionTreeModel(val topNode: Node, val algo: Algo) extends Serializable {
+class SimplifiableDecisionTreeModel(val nodes: Array[Node],val topNodeIdx: Int, val algo: Algo) extends Serializable {
 
   /**
    * Predict values for a single data point using the model trained.
@@ -38,8 +35,7 @@ class DecisionTreeModel(val topNode: Node, val algo: Algo) extends Serializable 
    * @return Double prediction from the trained model
    */
   def predict(features: Vector): Double = {
-    //    topNode.predictIfLeaf(features)
-    1.0
+    traverseTree(nodes(0), features)
   }
 
   /**
@@ -50,5 +46,14 @@ class DecisionTreeModel(val topNode: Node, val algo: Algo) extends Serializable 
    */
   def predict(features: RDD[Vector]): RDD[Double] = {
     features.map(x => predict(x))
+  }
+
+  @tailrec
+  private def traverseTree(currentNode: Node, features: Vector): Double = {
+    if (currentNode.isLeaf) {
+      currentNode.predict
+    } else {
+      traverseTree(nodes(currentNode.nextNodeIndex(features)), features)
+    }
   }
 }

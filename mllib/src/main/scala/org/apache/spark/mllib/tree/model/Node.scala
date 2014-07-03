@@ -29,8 +29,8 @@ import org.apache.spark.mllib.linalg.Vector
  * @param predict predicted value at the node
  * @param isLeaf whether the leaf is a node
  * @param split split to calculate left and right nodes
- * @param leftNode  left child
- * @param rightNode right child
+ * @param leftNodeIndex  left child index
+ * @param rightNodeIndex right child index
  * @param stats information gain stats
  */
 @DeveloperApi
@@ -39,8 +39,8 @@ class Node (
     val predict: Double,
     val isLeaf: Boolean,
     val split: Option[Split],
-    var leftNode: Option[Node],
-    var rightNode: Option[Node],
+    var leftNodeIndex: Option[Int],
+    var rightNodeIndex: Option[Int],
     val stats: Option[InformationGainStats]) extends Serializable with Logging {
 
   override def toString = "id = " + id + ", isLeaf = " + isLeaf + ", predict = " + predict + ", " +
@@ -58,36 +58,30 @@ class Node (
     logDebug("stats = " + stats)
     logDebug("predict = " + predict)
     if (!isLeaf) {
-      val leftNodeIndex = id * 2 + 1
-      val rightNodeIndex = id * 2 + 2
-      leftNode = Some(nodes(leftNodeIndex))
-      rightNode = Some(nodes(rightNodeIndex))
-      leftNode.get.build(nodes)
-      rightNode.get.build(nodes)
+      leftNodeIndex = Some(id * 2 + 1)
+      rightNodeIndex = Some(id * 2 + 2)
+      nodes(leftNodeIndex.get).build(nodes)
+      nodes(rightNodeIndex.get).build(nodes)
     }
   }
 
   /**
-   * predict value if node is not leaf
+   * solve for next node index
    * @param feature feature value
    * @return predicted value
    */
-  def predictIfLeaf(feature: Vector) : Double = {
-    if (isLeaf) {
-      predict
-    } else{
-      if (split.get.featureType == Continuous) {
-        if (feature(split.get.feature) <= split.get.threshold) {
-          leftNode.get.predictIfLeaf(feature)
-        } else {
-          rightNode.get.predictIfLeaf(feature)
-        }
+  def nextNodeIndex(feature: Vector): Int = {
+    if (split.get.featureType == Continuous) {
+      if (feature(split.get.feature) <= split.get.threshold) {
+        leftNodeIndex.get
       } else {
-        if (split.get.categories.contains(feature(split.get.feature))) {
-          leftNode.get.predictIfLeaf(feature)
-        } else {
-          rightNode.get.predictIfLeaf(feature)
-        }
+        rightNodeIndex.get
+      }
+    } else {
+      if (split.get.categories.contains(feature(split.get.feature))) {
+        leftNodeIndex.get
+      } else {
+        rightNodeIndex.get
       }
     }
   }
