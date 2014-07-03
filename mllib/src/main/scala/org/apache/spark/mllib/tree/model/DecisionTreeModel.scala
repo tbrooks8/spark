@@ -26,7 +26,7 @@ import scala.annotation.tailrec
 
 
 @Experimental
-class DecisionTreeModel(val nodes: Array[Node],val rootNodeIndex: Int, val algo: Algo) extends Serializable {
+class DecisionTreeModel(val nodes: Array[Node], val rootNodeIndex: Int, val algo: Algo) extends Serializable {
 
   /**
    * Predict values for a single data point using the model trained.
