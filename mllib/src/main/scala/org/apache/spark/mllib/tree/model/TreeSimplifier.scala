@@ -1,5 +1,7 @@
 package org.apache.spark.mllib.tree.model
 
+import org.apache.spark.mllib.linalg.Vector
+
 /**
  * Created by timbrooks on 6/28/14.
  */

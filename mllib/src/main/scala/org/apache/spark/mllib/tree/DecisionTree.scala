@@ -138,7 +138,7 @@ class DecisionTree (private val strategy: Strategy) extends Serializable with Lo
     // Build the full tree using the node info calculated in the level-wise best split calculations.
     rootNode.build(nodes)
 
-    new SimplifiableDecisionTreeModel(nodes, 0, strategy.algo)
+    new DecisionTreeModel(nodes, 0, strategy.algo)
   }
 
   /**
