@@ -134,11 +134,11 @@ class DecisionTree (private val strategy: Strategy) extends Serializable with Lo
     logDebug("#####################################")
 
     // Initialize the top or root node of the tree.
-    val topNode = nodes(0)
+    val rootNode = nodes(0)
     // Build the full tree using the node info calculated in the level-wise best split calculations.
-    topNode.build(nodes)
+    rootNode.build(nodes)
 
-    new DecisionTreeModel(topNode, strategy.algo)
+    new SimplifiableDecisionTreeModel(nodes, 0, strategy.algo)
   }
 
   /**

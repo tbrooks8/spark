@@ -26,7 +26,7 @@ import scala.annotation.tailrec
 
 
 @Experimental
-class SimplifiableDecisionTreeModel(val nodes: Array[Node],val topNodeIdx: Int, val algo: Algo) extends Serializable {
+class SimplifiableDecisionTreeModel(val nodes: Array[Node],val rootNodeIndex: Int, val algo: Algo) extends Serializable {
 
   /**
    * Predict values for a single data point using the model trained.
@@ -35,7 +35,7 @@ class SimplifiableDecisionTreeModel(val nodes: Array[Node],val topNodeIdx: Int, 
    * @return Double prediction from the trained model
    */
   def predict(features: Vector): Double = {
-    traverseTree(nodes(0), features)
+    traverseTree(nodes(rootNodeIndex), features)
   }
 
   /**
