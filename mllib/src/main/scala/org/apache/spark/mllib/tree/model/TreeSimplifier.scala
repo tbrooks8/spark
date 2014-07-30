@@ -18,17 +18,15 @@
 package org.apache.spark.mllib.tree.model
 
 import org.apache.spark.mllib.linalg.Vector
+import org.apache.spark.mllib.tree.configuration.Direction
+import org.apache.spark.mllib.tree.configuration.Direction.Direction
 
 import scala.annotation.tailrec
 import scala.collection.mutable
 import scala.collection.mutable.ArrayBuffer
 
 class TreeSimplifier {
-  case class Parent(parentIndex: Int, direction: String)
-  object Direction extends Enumeration {
-    type Direction = Value
-    val Right, Left = Value
-  }
+  case class Parent(parentIndex: Int, direction: Direction)
 
   protected[tree] def simplifyTree(
     tree: DecisionTreeModel,
@@ -60,8 +58,8 @@ class TreeSimplifier {
 
   private def handleLeaf(newTree: ArrayBuffer[Node], parentStack: mutable.Stack[Parent])  {
     parentStack.pop() match {
-      case Parent(index, Left) => newTree(index).leftNodeIndex = Some(newTree.size)
-      case Parent(index, Right) => newTree(index).leftNodeIndex = Some(newTree.size)
+      case Parent(index, Direction.Left) => newTree(index).leftNodeIndex = Some(newTree.size)
+      case Parent(index, Direction.Right) => newTree(index).leftNodeIndex = Some(newTree.size)
     }
 
 
