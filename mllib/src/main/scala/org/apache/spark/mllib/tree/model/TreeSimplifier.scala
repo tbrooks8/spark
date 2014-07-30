@@ -40,6 +40,9 @@ class TreeSimplifier {
     @tailrec
     def searchTree(node: Node): DecisionTreeModel = {
       if (nodesRemainingStack.isEmpty && node.isLeaf) {
+        if (parentStack.nonEmpty) {
+          setChild(newTree, parentStack)
+        }
         new DecisionTreeModel(newTree.toArray, 0, tree.algo)
       } else {
         if (node.isLeaf) {
