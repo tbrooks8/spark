@@ -43,10 +43,17 @@ class TreeSimplifier {
         new DecisionTreeModel(newTree.toArray, 0, tree.algo)
       } else {
         if (node.isLeaf) {
-          handleLeaf(newTree, parentStack)
-          searchTree(nodes(node.nextNodeIndex(features)))
+          // This could throw if first node leaf
+          setChild(newTree, parentStack)
+          searchTree(nodes(nodesRemainingStack.pop()))
         } else if (newTreeFeatures contains node.split.get.feature) {
-          searchTree(nodes(node.nextNodeIndex(features)))
+          if (parentStack.nonEmpty) {
+            setChild(newTree, parentStack)
+          }
+          parentStack.push(Parent(newTree.length, Direction.Left), Parent(newTree.length, Direction.Right))
+          newTree :+ new Node(node.id, node.predict, node.isLeaf, node.split, None, None, node.stats)
+          nodesRemainingStack.push(node.leftNodeIndex.get, node.rightNodeIndex.get)
+          searchTree(nodes(nodesRemainingStack.pop()))
         } else {
           searchTree(nodes(node.nextNodeIndex(features)))
         }
@@ -56,7 +63,7 @@ class TreeSimplifier {
     searchTree(nodes(tree.rootNodeIndex))
   }
 
-  private def handleLeaf(newTree: ArrayBuffer[Node], parentStack: mutable.Stack[Parent])  {
+  private def setChild(newTree: ArrayBuffer[Node], parentStack: mutable.Stack[Parent])  {
     parentStack.pop() match {
       case Parent(index, Direction.Left) => newTree(index).leftNodeIndex = Some(newTree.size)
       case Parent(index, Direction.Right) => newTree(index).rightNodeIndex = Some(newTree.size)
