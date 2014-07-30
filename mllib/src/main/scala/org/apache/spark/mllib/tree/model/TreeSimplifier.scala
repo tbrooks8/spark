@@ -59,7 +59,7 @@ class TreeSimplifier {
   private def handleLeaf(newTree: ArrayBuffer[Node], parentStack: mutable.Stack[Parent])  {
     parentStack.pop() match {
       case Parent(index, Direction.Left) => newTree(index).leftNodeIndex = Some(newTree.size)
-      case Parent(index, Direction.Right) => newTree(index).leftNodeIndex = Some(newTree.size)
+      case Parent(index, Direction.Right) => newTree(index).rightNodeIndex = Some(newTree.size)
     }
 
 
