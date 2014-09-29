@@ -46,7 +46,6 @@ class TreeSimplifier {
         new DecisionTreeModel(newTree.toArray, 0, tree.algo)
       } else {
         if (node.isLeaf) {
-          // This could throw if first node leaf
           setChild(newTree, parentStack)
           searchTree(nodes(nodesRemainingStack.pop()))
         } else if (newTreeFeatures contains node.split.get.feature) {
@@ -54,7 +53,7 @@ class TreeSimplifier {
             setChild(newTree, parentStack)
           }
           parentStack.push(Parent(newTree.length, Direction.Left), Parent(newTree.length, Direction.Right))
-          newTree :+ new Node(node.id, node.predict, node.isLeaf, node.split, None, None, node.stats)
+          newTree += new Node(node.id, node.predict, node.isLeaf, node.split, None, None, node.stats)
           nodesRemainingStack.push(node.leftNodeIndex.get, node.rightNodeIndex.get)
           searchTree(nodes(nodesRemainingStack.pop()))
         } else {

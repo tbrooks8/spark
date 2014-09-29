@@ -344,7 +344,7 @@ class DecisionTreeSuite extends FunSuite with LocalSparkContext {
       maxDepth = 3,
       numClassesForClassification = 100,
       maxBins = 100,
-      categoricalFeaturesInfo = Map(0 -> 10, 1-> 10))
+      categoricalFeaturesInfo = Map(0 -> 10, 1 -> 10))
     val (splits, bins) = DecisionTree.findSplitsBins(rdd, strategy)
 
     // 2^10 - 1 > 100, so categorical variables will be ordered
@@ -399,7 +399,7 @@ class DecisionTreeSuite extends FunSuite with LocalSparkContext {
       numClassesForClassification = 2,
       maxDepth = 3,
       maxBins = 100,
-      categoricalFeaturesInfo = Map(0 -> 3, 1-> 3))
+      categoricalFeaturesInfo = Map(0 -> 3, 1 -> 3))
     val (splits, bins) = DecisionTree.findSplitsBins(rdd, strategy)
     val bestSplits = DecisionTree.findBestSplits(rdd, new Array(7), strategy, 0,
       Array[List[Filter]](), splits, bins, 10)
